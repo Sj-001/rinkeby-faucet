@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/faucet.css" />
+    <title>Faucet-Rinkeby</title>
+  </head>
+  <>
+  <body>
+    <h2>Rinkeby Faucet Ethereum</h2>
+    <p>Enter your wallet address and get instant 0.1 ETH.</p>
+
+    <div class="container">
+      <form>
+        <div class="row">
+          <div class="col-25">
+            <label for="fname">Wallet Address</label>
+          </div>
+          <div class="col-75">
+            <input
+              type="text"
+              id="fname"
+              name="address"
+              placeholder="Your wallet address.."
+            />
+          </div>
+        </div>
+        <div id="loader-class" style="display: none">
+          <div class="loader"></div>
+        </div>
+
+        <div id="loader-class" style="display: none">
+          <div class="lds-roller">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+          </div>
+        </div>
+        <div class="row">
+          <input id="btn-submit" type="submit" value="Get 0.1 ETH" />
+        </div>
+      </form>
+    </div>
+  </body>
+  <script>
+    function setLoading(val) {
+      if (val) {
+        document.getElementById("loader-class").style.display = "block";
+      } else {
+        document.getElementById("loader-class").style.display = "none";
+      }
+    }
+    async function getETH() {
+      var address = document.getElementById("fname").value;
+      if (address === "") {
+        alert("Please enter a wallet address.");
+      } else {
+        var object = {
+          address: address,
+        };
+        setLoading(true);
+        var result = await fetch("http://localhost:5000/get-ether", {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(object),
+        });
+
+        console.log(result);
+        setLoading(false);
+        result = result.json();
+        if (result.status === true) {
+          alert(
+            `Transaction processed: https://rinkeby.etherscan.io/tx/${result.transactionHash}`
+          );
+        }
+      }
+    }
+
+    document.getElementById("btn-submit").onclick = getETH;
+  </script>
+</html>
