@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="/faucet.css" />
     <title>Faucet-Rinkeby</title>
   </head>
-  <>
+
   <body>
     <h2>Rinkeby Faucet Ethereum</h2>
     <p>Enter your wallet address and get instant 0.1 ETH.</p>
@@ -57,7 +57,8 @@
         document.getElementById("loader-class").style.display = "none";
       }
     }
-    async function getETH() {
+    async function getETH(e) {
+      e.preventDefault();
       var address = document.getElementById("fname").value;
       if (address === "") {
         alert("Please enter a wallet address.");
@@ -66,23 +67,32 @@
           address: address,
         };
         setLoading(true);
-        var result = await fetch("http://localhost:5000/get-ether", {
+        var result = fetch("http://localhost:5000/get-ether", {
           method: "POST",
           headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
           },
           body: JSON.stringify(object),
-        });
-
-        console.log(result);
-        setLoading(false);
-        result = result.json();
-        if (result.status === true) {
+        }).then((response) => {
+          console.log("response: ", response.json());
+          var data = response.json();
           alert(
-            `Transaction processed: https://rinkeby.etherscan.io/tx/${result.transactionHash}`
+            `Transaction processed: https://rinkeby.etherscan.io/tx/${response.transactionHash}`
           );
-        }
+        });
+        /*.then((data) => {
+            console.log("data:", data);
+
+            if (data.status === true) {
+              alert(
+                `Transaction processed: https://rinkeby.etherscan.io/tx/${result.transactionHash}`
+              );
+            }
+          });*/
+
+        setLoading(false);
+        //result = result.json();
       }
     }
 

@@ -42,7 +42,9 @@ app.post("/get-ether", async (req, res) => {
     var sent = await faucetContract.methods
       .getEther(address)
       .send({ from: account.address });
-    res.send(sent);
+
+    console.log(sent);
+    res.send({ data: sent });
   } catch (err) {
     res.send(err.message);
   }
