@@ -25,6 +25,7 @@ let account = web3.eth.accounts.privateKeyToAccount(process.env.PRIVATE_KEY, [
 const app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.use(express.static(__dirname));
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header(
@@ -43,11 +44,17 @@ app.post("/get-ether", async (req, res) => {
       .getEther(address)
       .send({ from: account.address });
 
+    res.send(
+      `Transaction processed: https://rinkeby.etherscan.io/tx/${sent.transactionHash}`
+    );
     console.log(sent);
-    res.send({ data: sent });
   } catch (err) {
-    res.send(err.message);
+    res.status(404).send({ message: "Faucet under maintenance." });
   }
+});
+
+app.get("/", function (req, res) {
+  res.sendFile(__dirname + "/index.html");
 });
 // console.log(faucetContract);
 app.listen(5000, () => {
